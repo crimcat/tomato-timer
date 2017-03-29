@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jnlp href="launch.jnlp" spec="1.0+">
+    <information>
+        <title>TomatoTimer</title>
+        <vendor>Stas</vendor>
+        <homepage href=""/>
+        <description>TomatoTimer</description>
+        <description kind="short">TomatoTimer</description>
+    <icon href="tb.png" kind="splash"/>
+</information>
+    <update check="always"/>
+    <security>
+<all-permissions/>
+</security>
+    <resources>
+        <j2se version="1.8+"/>
+        <jar href="TomatoTimer.jar" main="true"/>
+    </resources>
+    <application-desc main-class="tomatotimer.app.TomatoTimer">
+    </application-desc>
+</jnlp>
