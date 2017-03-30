@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<jnlp href="launch.jnlp" spec="1.0+">
+<jnlp codebase="" href="launch.jnlp" spec="1.0+">
     <information>
         <title>TomatoTimer</title>
         <vendor>Stas</vendor>
@@ -7,8 +7,10 @@
         <description>TomatoTimer</description>
         <description kind="short">TomatoTimer</description>
     <icon href="tb.png" kind="splash"/>
+<icon href="t.png" kind="default"/>
+<offline-allowed/>
 </information>
-    <update check="always"/>
+    <update check="background"/>
     <security>
 <all-permissions/>
 </security>
