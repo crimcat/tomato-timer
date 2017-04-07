@@ -6,10 +6,12 @@
 package tomatotimer.app;
 
 import java.awt.Frame;
+import java.awt.TrayIcon;
 import java.io.IOException;
 import java.time.LocalTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.control.Tooltip;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -100,7 +102,7 @@ public class MainDialogue extends javax.swing.JFrame {
             }
         });
 
-        unpredictedPauseButton.setText("Непредвиденная пауза");
+        unpredictedPauseButton.setText("Пауза");
         unpredictedPauseButton.setEnabled(false);
         unpredictedPauseButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -140,13 +142,13 @@ public class MainDialogue extends javax.swing.JFrame {
                                     .addComponent(bunchCounterLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                     .addComponent(timeValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                         .addComponent(clockLabel))
                     .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(timerPanelLayout.createSequentialGroup()
-                        .addComponent(unpredictedPauseButton)
+                        .addComponent(unpredictedPauseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(heyIGiveUpButton)))
+                        .addComponent(heyIGiveUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         timerPanelLayout.setVerticalGroup(
@@ -413,23 +415,28 @@ public class MainDialogue extends javax.swing.JFrame {
                 unpredictedPauseButton.setEnabled(true);
                 disableControlsWhileRunning();
                 playWorkStartedSoundIfConfigured();
+                trayIcon.setToolTip("TomatoTimer: worktime");
                 break;
             case PAUSED: case PAUSED_IN_BREAK:
-                timeCounterTypeLabel.setText("У нас сейчас: непредвиденная пауза");
+                timeCounterTypeLabel.setText("У нас сейчас: пауза");
+                trayIcon.setToolTip("TomatoTimer: paused");
                 break;
             case BREAK:
                 timeCounterTypeLabel.setText("У нас сейчас: перерыв");
                 unpredictedPauseButton.setEnabled(false);
                 playBreakStartedSoundIfConfigured();
+                trayIcon.setToolTip("TomatoTimer: break");
                 break;
             case FINISH:
                 timeCounterTypeLabel.setText("У нас сейчас: отсчёт закончен");
                 enableControlsOnFinish();
                 playFinishSoundIfConfigured();
+                trayIcon.setToolTip("TomatoTimer: finished");
                 te = null;
                 break;
             case IDLE:
                 timeCounterTypeLabel.setText("У нас сейчас: ждём команды");
+                trayIcon.setToolTip("TomatoTimer: idle");
                 break;
             }
         }
@@ -449,7 +456,7 @@ public class MainDialogue extends javax.swing.JFrame {
                     unpredictedPauseButton.setText("Продолжаем");
                     break;
                 case PAUSED:
-                    unpredictedPauseButton.setText("Непредвиденная пауза");
+                    unpredictedPauseButton.setText("Пауза");
                     te.proceed();
                     break;
                 case PAUSED_IN_BREAK:
@@ -457,6 +464,7 @@ public class MainDialogue extends javax.swing.JFrame {
                 default:
                     break;
             }
+            setCurrentStateLabel();
         }
     }//GEN-LAST:event_unpredictedPauseButtonActionPerformed
 
@@ -476,6 +484,10 @@ public class MainDialogue extends javax.swing.JFrame {
             }
         });
         clockThread.start();
+    }
+    
+    public void setTrayIcon(TrayIcon trayIcon) {
+        this.trayIcon = trayIcon;
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -510,4 +522,5 @@ public class MainDialogue extends javax.swing.JFrame {
 
     private TomatoEngine te = null;
     private Thread clockThread = null;
+    private TrayIcon trayIcon = null;
 }

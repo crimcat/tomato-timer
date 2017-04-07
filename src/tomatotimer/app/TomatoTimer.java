@@ -94,8 +94,9 @@ public class TomatoTimer {
             } catch(AWTException ex) {
                 Logger.getLogger(TomatoTimer.class.getName()).log(Level.SEVERE, null, ex);
             }
+            appFrame.setTrayIcon(trayIcon);
         }
     }
     
-    private static JFrame appFrame;
+    private static MainDialogue appFrame;
 }
