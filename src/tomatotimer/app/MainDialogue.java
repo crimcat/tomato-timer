@@ -7,6 +7,7 @@ package tomatotimer.app;
 
 import java.awt.Frame;
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sound.sampled.AudioInputStream;
@@ -30,6 +31,7 @@ public class MainDialogue extends javax.swing.JFrame {
         super(name);
         initComponents();
         setCurrentStateLabel();
+        startClocks();
     }
 
     /**
@@ -51,6 +53,7 @@ public class MainDialogue extends javax.swing.JFrame {
         unpredictedPauseButton = new javax.swing.JButton();
         heyIGiveUpButton = new javax.swing.JButton();
         bunchCounterLabel = new javax.swing.JLabel();
+        clockLabel = new javax.swing.JLabel();
         settingsPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         bunchSizeCombo = new javax.swing.JComboBox<>();
@@ -117,6 +120,10 @@ public class MainDialogue extends javax.swing.JFrame {
         bunchCounterLabel.setText("-");
         bunchCounterLabel.setBorder(javax.swing.BorderFactory.createTitledBorder("#"));
 
+        clockLabel.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        clockLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        clockLabel.setText("00:00");
+
         javax.swing.GroupLayout timerPanelLayout = new javax.swing.GroupLayout(timerPanel);
         timerPanel.setLayout(timerPanelLayout);
         timerPanelLayout.setHorizontalGroup(
@@ -133,7 +140,8 @@ public class MainDialogue extends javax.swing.JFrame {
                                     .addComponent(bunchCounterLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                     .addComponent(timeValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(0, 47, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(clockLabel))
                     .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(timerPanelLayout.createSequentialGroup()
                         .addComponent(unpredictedPauseButton)
@@ -145,14 +153,17 @@ public class MainDialogue extends javax.swing.JFrame {
             timerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(timerPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(timeCounterTypeLabel)
                 .addGroup(timerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(timerPanelLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(timeValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(timerPanelLayout.createSequentialGroup()
-                        .addGap(21, 21, 21)
-                        .addComponent(bunchCounterLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(timeCounterTypeLabel)
+                        .addGroup(timerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(timerPanelLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(timeValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(timerPanelLayout.createSequentialGroup()
+                                .addGap(21, 21, 21)
+                                .addComponent(bunchCounterLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addComponent(clockLabel))
                 .addGap(5, 5, 5)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -218,7 +229,7 @@ public class MainDialogue extends javax.swing.JFrame {
                         .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
                             .addComponent(jLabel2))
-                        .addContainerGap(24, Short.MAX_VALUE))))
+                        .addContainerGap(35, Short.MAX_VALUE))))
             .addGroup(settingsPanelLayout.createSequentialGroup()
                 .addGap(58, 58, 58)
                 .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -426,6 +437,7 @@ public class MainDialogue extends javax.swing.JFrame {
     
     private void heyIGiveUpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_heyIGiveUpButtonActionPerformed
         java.util.logging.Logger.getLogger(MainDialogue.class.getName()).log(Level.INFO, "User forces exitting application");
+        clockThread.interrupt();
         System.exit(0);
     }//GEN-LAST:event_heyIGiveUpButtonActionPerformed
 
@@ -448,10 +460,29 @@ public class MainDialogue extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_unpredictedPauseButtonActionPerformed
 
+    private void startClocks() {
+        clockThread = new Thread(() -> {
+            while(true) {
+                try {
+                    LocalTime now = LocalTime.now();
+                    final int hours = now.getHour();
+                    final int minutes = now.getMinute();
+                    final int seconds = now.getSecond();
+                    clockLabel.setText(String.format("%d:%d", hours, minutes));
+                    Thread.sleep(60 - seconds);
+                } catch(InterruptedException ex) {
+                    break;
+                }
+            }
+        });
+        clockThread.start();
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> breakDurationCombo;
     private javax.swing.JLabel bunchCounterLabel;
     private javax.swing.JComboBox<String> bunchSizeCombo;
+    private javax.swing.JLabel clockLabel;
     private javax.swing.JPanel helpPanel;
     private javax.swing.JButton heyIGiveUpButton;
     private javax.swing.JInternalFrame jInternalFrame1;
@@ -478,4 +509,5 @@ public class MainDialogue extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     private TomatoEngine te = null;
+    private Thread clockThread = null;
 }
