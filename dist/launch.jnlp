@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<jnlp codebase="" href="launch.jnlp" spec="1.0+">
+<jnlp codebase="file:/C:/Users/Stas/OneDrive/Projects/TomatoTimer/dist/" href="launch.jnlp" spec="1.0+">
     <information>
         <title>TomatoTimer</title>
         <vendor>Stas</vendor>
@@ -18,6 +18,6 @@
         <j2se version="1.8+"/>
         <jar href="TomatoTimer.jar" main="true"/>
     </resources>
-    <application-desc main-class="tomatotimer.app.TomatoTimer">
+    <application-desc main-class="tomatotimer.app.ConsoleTest">
     </application-desc>
 </jnlp>

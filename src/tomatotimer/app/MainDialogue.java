@@ -5,13 +5,11 @@
  */
 package tomatotimer.app;
 
-import java.awt.Frame;
 import java.awt.TrayIcon;
 import java.io.IOException;
 import java.time.LocalTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.control.Tooltip;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -348,8 +346,6 @@ public class MainDialogue extends javax.swing.JFrame {
         breakDurationCombo.setEnabled(false);
         bunchSizeCombo.setEnabled(false);
         tomatoDurationCombo.setEnabled(false);
-        needBeepOnBreakStart.setEnabled(false);
-        needBeepOnTomatoStart.setEnabled(false);
     }
     
     private void enableControlsOnFinish() {
@@ -357,8 +353,6 @@ public class MainDialogue extends javax.swing.JFrame {
         breakDurationCombo.setEnabled(true);
         bunchSizeCombo.setEnabled(true);
         tomatoDurationCombo.setEnabled(true);
-        needBeepOnBreakStart.setEnabled(true);
-        needBeepOnTomatoStart.setEnabled(true);
     }
     
     private void playWorkStartedSoundIfConfigured() {
