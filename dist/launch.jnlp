@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<jnlp codebase="file:/C:/Users/Stas/OneDrive/Projects/TomatoTimer/dist/" href="launch.jnlp" spec="1.0+">
+<jnlp codebase="file:/C:/Users/Stas/Documents/NetBeansProjects/TomatoTimer/dist/" href="launch.jnlp" spec="1.0+">
     <information>
         <title>TomatoTimer</title>
         <vendor>Stas</vendor>
         <homepage href=""/>
         <description>TomatoTimer</description>
         <description kind="short">TomatoTimer</description>
-    <icon href="tb.png" kind="splash"/>
-<icon href="t.png" kind="default"/>
-<offline-allowed/>
+    <offline-allowed/>
 </information>
     <update check="background"/>
     <security>
@@ -18,6 +16,6 @@
         <j2se version="1.8+"/>
         <jar href="TomatoTimer.jar" main="true"/>
     </resources>
-    <application-desc main-class="tomatotimer.app.ConsoleTest">
+    <application-desc main-class="tomatotimer.app.TomatoTimer">
     </application-desc>
 </jnlp>
