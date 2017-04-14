@@ -67,10 +67,15 @@ public class TomatoTimer {
             trayIcon.addMouseListener(new MouseListener() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    appFrame.setVisible(true);
-                    appFrame.setState(JFrame.NORMAL);
-                    appFrame.requestFocus();
-                    appFrame.toFront();
+                    if(appFrame.getState() == JFrame.NORMAL) {
+                        appFrame.setState(JFrame.ICONIFIED);
+                        appFrame.setVisible(false);
+                    } else {
+                        appFrame.setVisible(true);
+                        appFrame.setState(JFrame.NORMAL);
+                        appFrame.requestFocus();
+                        appFrame.toFront();
+                    }
                 }
 
                 @Override
