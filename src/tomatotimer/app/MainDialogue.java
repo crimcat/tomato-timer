@@ -8,6 +8,7 @@ package tomatotimer.app;
 import java.awt.TrayIcon;
 import java.io.IOException;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sound.sampled.AudioInputStream;
@@ -339,6 +340,7 @@ public class MainDialogue extends javax.swing.JFrame {
         progressBar.setMaximum(te.getCurrentPhaseDuration());
         progressBar.setValue(te.getMinutesToGo());
         bunchCounterLabel.setText(Integer.toString(te.getBunchSize()));
+        trayIcon.setToolTip(getTooltipText());
     }
     
     private void disableControlsWhileRunning() {
@@ -409,31 +411,47 @@ public class MainDialogue extends javax.swing.JFrame {
                 unpredictedPauseButton.setEnabled(true);
                 disableControlsWhileRunning();
                 playWorkStartedSoundIfConfigured();
-                trayIcon.setToolTip("TomatoTimer: worktime");
                 break;
             case PAUSED: case PAUSED_IN_BREAK:
                 timeCounterTypeLabel.setText("У нас сейчас: пауза");
-                trayIcon.setToolTip("TomatoTimer: paused");
                 break;
             case BREAK:
                 timeCounterTypeLabel.setText("У нас сейчас: перерыв");
                 unpredictedPauseButton.setEnabled(false);
                 playBreakStartedSoundIfConfigured();
-                trayIcon.setToolTip("TomatoTimer: break");
                 break;
             case FINISH:
                 timeCounterTypeLabel.setText("У нас сейчас: отсчёт закончен");
                 enableControlsOnFinish();
                 playFinishSoundIfConfigured();
-                trayIcon.setToolTip("TomatoTimer: finished");
                 te = null;
                 break;
             case IDLE:
                 timeCounterTypeLabel.setText("У нас сейчас: ждём команды");
-                trayIcon.setToolTip("TomatoTimer: idle");
                 break;
             }
+            trayIcon.setToolTip(getTooltipText());
         }
+    }
+    
+    private String getTooltipText() {
+        String toolTipText = "";
+        switch(te.getCurrentState()) {
+        case WORKING:
+            toolTipText = "TomatoTimer: worktime";
+            break;
+        case BREAK:
+            toolTipText = "TomatoTimer: break";
+            break;
+        case PAUSED:
+        case PAUSED_IN_BREAK:
+            return "TomatoTimer: paused";
+        case FINISH:
+            return "TomatoTimer: finished";
+        case IDLE:
+            return "TomatoTimer: idle";
+        }
+        return String.format("%s - %d min left", toolTipText, te.getMinutesToGo());
     }
     
     private void heyIGiveUpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_heyIGiveUpButtonActionPerformed
@@ -466,11 +484,11 @@ public class MainDialogue extends javax.swing.JFrame {
         clockThread = new Thread(() -> {
             while(true) {
                 try {
-                    LocalTime now = LocalTime.now();
+                    LocalTime now = LocalTime.now(ZoneId.of("UTC+03:00"));
                     final int hours = now.getHour();
                     final int minutes = now.getMinute();
                     final int seconds = now.getSecond();
-                    clockLabel.setText(String.format("%d:%d", hours, minutes));
+                    clockLabel.setText(String.format("%02d:%02d", hours, minutes));
                     Thread.sleep(60 - seconds);
                 } catch(InterruptedException ex) {
                     break;
