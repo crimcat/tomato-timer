@@ -6,29 +6,45 @@
 package tomatotimer.app;
 
 /**
- *
+ * The engine: this class defines the logic of tomato timer.
  * @author Stas Torgashov  (crimcat@yandex.ru)
  */
 public class TomatoEngine {
     
+    /**
+     * Possible state the engine use.
+     */
     public enum State {
-        IDLE,
-        WORKING,
-        BREAK,
-        FINISH,
-        PAUSED,
-        PAUSED_IN_BREAK,
+        IDLE,               // engine is just started, doing nothing
+        WORKING,            // work time (tomato) period
+        BREAK,              // break time period
+        FINISH,             // all tomatoes are finished
+        PAUSED,             // engine is paused being in work time
+        PAUSED_IN_BREAK,    // engine is paused being in break time
     }
     
+    /**
+     * Callback interface to indicate that engine state has been changed.
+     */
     public interface StateChangeInformer {
         void stateChanged();
     }
+    
+    /**
+     * Callback interface to indicate that one minute has passed.
+     */
     public interface OneMinuteTimerInformer {
         void oneMinutePass();
     }
     
     private State currentState = State.IDLE;
     
+    /**
+     * Create the engine with timing parameters.
+     * @param bunchSize number of tomatoes to run
+     * @param tomatoDuration work time (tomato) duration in minutes
+     * @param breakDuration break time duration in minutes
+     */
     public TomatoEngine(int bunchSize, int tomatoDuration, int breakDuration) {
         if(bunchSize < 1) {
             throw new RuntimeException("Bunch size cannot be 0 or negative");
@@ -51,37 +67,46 @@ public class TomatoEngine {
         );
     }
     
-    public final int getBunchSize() {
-        return bunchSize;
-    }
-    
+    /**
+     * @return work time (tomato) duration in minutes
+     */
     public final int getTomatoDuration() {
         return tomatoDuration;
     }
     
+    /**
+     * @return break time duration in minutes
+     */
     public final int getBreakDuration() {
         return breakDuration;
     }
     
-    public final int getCurrentPhaseDuration() {
-        if(getCurrentState() == State.WORKING) {
-            return getTomatoDuration();
-        } else if(getCurrentState() == State.BREAK) {
-            return getBreakDuration();
-        }
-        return 0;
-    }
-    
+    /**
+     * Set state change callback.
+     * @param sciCb state change callback interface object
+     * @see StateChangeInformer
+     * @return this
+     */
     public TomatoEngine setStateChangeCallback(StateChangeInformer sciCb) {
         this.scCb = sciCb;
         return this;
     }
     
+    /**
+     * Set one minute passed callback.
+     * @param omtiCb one minute passed callback interface object
+     * @see OneMinuteTimerInformer
+     * @return this
+     */
     public TomatoEngine setMinuteElapsedCallback(OneMinuteTimerInformer omtiCb) {
         this.omtCb = omtiCb;
         return this;
     }
     
+    /**
+     * Start the engine.
+     * @return true if the engine is really started
+     */
     public boolean start() {
         if(State.IDLE == getCurrentState()) {
             setCurrentState(State.WORKING);
@@ -91,6 +116,10 @@ public class TomatoEngine {
         return false;
     }
     
+    /**
+     * Pause the engine, stop time counting.
+     * @return true if the engine is successfully paused
+     */
     public boolean pause() {
         if(null == getCurrentState()) {
             return false;
@@ -108,6 +137,10 @@ public class TomatoEngine {
         return true;
     }
     
+    /**
+     * Start the engine again from paused state
+     * @return true if succeeded
+     */
     public boolean proceed() {
         if(State.PAUSED == getCurrentState()) {
             setCurrentState(State.WORKING);
@@ -117,6 +150,10 @@ public class TomatoEngine {
         return false;
     }
     
+    /**
+     * Cancel the engine, drop all operations and time counting.
+     * @return true if cancel operation is successfull
+     */
     public boolean cancel() {
         if(State.IDLE != getCurrentState()) {
             setCurrentState(State.FINISH);
@@ -126,22 +163,41 @@ public class TomatoEngine {
         return false;
     }
     
+    /**
+     * @see State
+     * @return current engine state
+     */
     public final State getCurrentState() {
         return currentState;
     }
     
+    /**
+     * @return how many tomatoes are still left to go
+     */
     public final int getRemainingTomatoes() {
         return bunchSize;
     }
     
+    /**
+     * @return minutes to go for current state
+     */
     public final int getMinutesToGo() {
         return minutesTimer.minutesToGo();
     }
     
+    /**
+     * Set current engine state.
+     * No validation is performed.
+     * @param newState new state value
+     */
     private void setCurrentState(State newState) {
         currentState = newState;
     }
     
+    /**
+     * Calculate next possible engine state.
+     * @return state value which can be next from the current one
+     */
     private State getNextState() {
         switch(getCurrentState()) {
             case IDLE:
@@ -161,7 +217,10 @@ public class TomatoEngine {
         return State.IDLE;
     }
     
-    private int getCurrentStateTimerDuration() {
+    /**
+     * @return duration of the current state or zero if currect state doesn't have a duration
+     */
+    public int getCurrentStateTimerDuration() {
         if(getCurrentState() == State.WORKING) {
             return tomatoDuration;
         } else if(getCurrentState() == State.BREAK) {
@@ -170,6 +229,9 @@ public class TomatoEngine {
         return 0;
     }
     
+    /**
+     * Check if we can decrement the number of tomatoes, and if we can - decrement the number of tomatoes.
+     */
     private void checkAndUpdateCounter() {
         if(bunchSize < 0) {
             throw new RuntimeException("Algorithm error!");

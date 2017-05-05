@@ -5,10 +5,6 @@
  */
 package tomatotimer.app;
 
-/**
- *
- * @author Stas Torgashov (crimcat@yandex.ru)
- */
 public class ConsoleTest {
 
     public static void main(String[] args) {

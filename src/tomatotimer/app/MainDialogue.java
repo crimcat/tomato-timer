@@ -312,6 +312,10 @@ public class MainDialogue extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * 'Start' button was pressed - start the tomato engine if applicable.
+     * @param evt button click event
+     */
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
         if((null == te) || (TomatoEngine.State.IDLE == te.getCurrentState())) {
             te = new TomatoEngine(
@@ -334,22 +338,33 @@ public class MainDialogue extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_startButtonActionPerformed
 
+    /**
+     * Update controls related to time counting.
+     */
     private void updateTimeMeter() {
         timeValueLabel.setText(String.format("0:%02d", te.getMinutesToGo()));
         progressBar.setMinimum(0);
-        progressBar.setMaximum(te.getCurrentPhaseDuration());
+        progressBar.setMaximum(te.getCurrentStateTimerDuration());
         progressBar.setValue(te.getMinutesToGo());
-        bunchCounterLabel.setText(Integer.toString(te.getBunchSize()));
+        bunchCounterLabel.setText(Integer.toString(te.getRemainingTomatoes()));
         trayIcon.setToolTip(getTooltipText());
     }
     
+    /**
+     * Disable controls when the tomato timer is running.
+     * Duration comboboxes are disabled, and 'Start' button is disabled.
+     */
     private void disableControlsWhileRunning() {
         startButton.setEnabled(false);
         breakDurationCombo.setEnabled(false);
         bunchSizeCombo.setEnabled(false);
         tomatoDurationCombo.setEnabled(false);
     }
-    
+
+    /**
+     * Enable controls when the tomato timer is finished.
+     * Duration comboboxes are enabled, and 'Start' button is enabled.
+     */
     private void enableControlsOnFinish() {
         startButton.setEnabled(true);
         breakDurationCombo.setEnabled(true);
@@ -357,18 +372,27 @@ public class MainDialogue extends javax.swing.JFrame {
         tomatoDurationCombo.setEnabled(true);
     }
     
+    /**
+     * Play work time (tomato) started sound if configured in the UI.
+     */
     private void playWorkStartedSoundIfConfigured() {
         if(needBeepOnTomatoStart.isSelected()) {
             playSound(WORKING_TIME_SOUND);
         }
     }
     
+    /**
+     * Play break started sound if configured in the UI.
+     */
     private void playBreakStartedSoundIfConfigured() {
         if(needBeepOnBreakStart.isSelected()) {
             playSound(BREAK_TIME_SOUND);
         }
     }
     
+    /**
+     * Play all tomatoes finished sound if configured in the UI.
+     */
     private void playFinishSoundIfConfigured() {
         if(needBeepOnBunchFinish.isSelected()) {
             playSound(FINISH_SOUND);
@@ -379,6 +403,10 @@ public class MainDialogue extends javax.swing.JFrame {
     private static final String BREAK_TIME_SOUND = "break";
     private static final String FINISH_SOUND = "finish";
     
+    /**
+     * Play the .wav sound file.
+     * @param name sound file name without extention.
+     */
     private void playSound(String name) {
         try {
             String wavFileName = String.format("tomatotimer/rc/sounds/%s.wav", name);
@@ -391,6 +419,9 @@ public class MainDialogue extends javax.swing.JFrame {
         }
     }
     
+    /**
+     * Unhide the application window and put it on top.
+     */
     private void comeToFront() {
         setAlwaysOnTop(true);
         toFront();
@@ -401,6 +432,9 @@ public class MainDialogue extends javax.swing.JFrame {
         setAlwaysOnTop(false);
     }
     
+    /**
+     * Set application state information according to the engine current state.
+     */
     private void setCurrentStateLabel() {
         if(null == te) {
             timeCounterTypeLabel.setText("У нас сейчас: ждём команды");
@@ -434,6 +468,10 @@ public class MainDialogue extends javax.swing.JFrame {
         }
     }
     
+    /**
+     * Update the tray icon tooltip text according to the current application state.
+     * @return 
+     */
     private String getTooltipText() {
         String toolTipText = "";
         switch(te.getCurrentState()) {
@@ -454,12 +492,20 @@ public class MainDialogue extends javax.swing.JFrame {
         return String.format("%s - %d min left", toolTipText, te.getMinutesToGo());
     }
     
+    /**
+     * Exit the application button is pressed.
+     * @param evt button click event object
+     */
     private void heyIGiveUpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_heyIGiveUpButtonActionPerformed
         java.util.logging.Logger.getLogger(MainDialogue.class.getName()).log(Level.INFO, "User forces exitting application");
         clockThread.interrupt();
         System.exit(0);
     }//GEN-LAST:event_heyIGiveUpButtonActionPerformed
 
+    /**
+     * 'Pause' button is pressed.
+     * @param evt button click event object
+     */
     private void unpredictedPauseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unpredictedPauseButtonActionPerformed
         if(null != te) {
             switch (te.getCurrentState()) {
@@ -480,6 +526,10 @@ public class MainDialogue extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_unpredictedPauseButtonActionPerformed
 
+    /**
+     * Start independent local application clocks.
+     * Hours and minutes are shown on the main application window.
+     */
     private void startClocks() {
         clockThread = new Thread(() -> {
             while(true) {
@@ -498,6 +548,10 @@ public class MainDialogue extends javax.swing.JFrame {
         clockThread.start();
     }
     
+    /**
+     * Remember the tray icon.
+     * @param trayIcon tray icon object reference
+     */
     public void setTrayIcon(TrayIcon trayIcon) {
         this.trayIcon = trayIcon;
     }

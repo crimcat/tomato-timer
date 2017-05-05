@@ -17,12 +17,13 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 /**
- *
+ * TomatoTimer application main.
  * @author Stas Torgashov  (crimcat@yandex.ru)
  */
 public class TomatoTimer {
 
     /**
+     * Start tomato timer application. No command line arguments are expected.
      * @param args the command line arguments
      */
     public static void main(String[] args) {
@@ -31,6 +32,9 @@ public class TomatoTimer {
         });
     }
     
+    /**
+     * Start Swing GUI.
+     */
     private static void createAndShowGUI() {
         try {
             for(javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -58,6 +62,10 @@ public class TomatoTimer {
         putApplicationIntoTray();
     }
     
+    /**
+     * Inject application icon into system tray is supported and assign action to this icon:
+     * mouse click would hide/show the application window.
+     */
     private static void putApplicationIntoTray() {
         if(SystemTray.isSupported()) {
             SystemTray tray = SystemTray.getSystemTray();

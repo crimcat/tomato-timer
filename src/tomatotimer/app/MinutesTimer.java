@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Application time counting.
  * @author Stas Torgashov (crimcat@yandex.ru)
  */
 public class MinutesTimer {
@@ -17,14 +17,26 @@ public class MinutesTimer {
     private final static int GRANULARITY_IN_SECONDS = 2;
     private final static int ONE_MINUTE = 60;
     
+    /**
+     * Callback interface needed to indicate a minute has elapsed.
+     */
     public interface IOneMinuteNotifier {
         void oneMinutePassed();
     }
     
+    /**
+     * Callback interface needed to indicate the time period is over.
+     */
     public interface ITimeCounterFinishedNotifier {
         void timeCounterFinished();
     }
     
+    /**
+     * Create the timer.
+     * Callbacks parameters cannot be null.
+     * @param minutesNotifier callback for minutes
+     * @param timeNotifier  callback for the whole time interval
+     */
     public MinutesTimer(IOneMinuteNotifier minutesNotifier, ITimeCounterFinishedNotifier timeNotifier) {
         if((null == minutesNotifier) || (null == timeNotifier)) {
             throw new RuntimeException("Callbacks cannot be null");
@@ -34,6 +46,10 @@ public class MinutesTimer {
         this.timeNotifier = timeNotifier;
     }
     
+    /**
+     * Start the timer.
+     * @param minutes number of minutes to go
+     */
     public void go(int minutes) {
         minutesToCount = minutes;
         if(minutesToCount > 0) {
@@ -65,18 +81,30 @@ public class MinutesTimer {
         }
     }
     
+    /**
+     * @return how many minutes are still left to go
+     */
     public int minutesToGo() {
         return minutesToCount;
     }
     
+    /**
+     * Pause the timer.
+     */
     public void pause() {
         isPaused = true;
     }
     
+    /**
+     * Start the timer again if it was paused before.
+     */
     public void proceed() {
         isPaused = false;
     }
     
+    /**
+     * Cancel running timer.
+     */
     public void cancel() {
         if((worker != null) && worker.isAlive()) {
             isPaused = false;
